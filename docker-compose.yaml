@@ -1,0 +1,11 @@
+version: '3'
+services:
+  streamer:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - YOUTUBE_URL=https://www.youtube.com/watch?v=jfKfPfyJRdk
+    tmpfs:
+      - /dev/shm:exec
+    restart: unless-stopped

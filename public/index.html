@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube DASH Streaming Player</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.0/dash.all.min.js"></script>
+    <style>
+        .debug-info { margin-top: 20px; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div>
+        <video id="videoPlayer" controls style="width: 640px; height: 360px;"></video>
+    </div>
+    <div class="debug-info">
+        <h3>Debug Information</h3>
+        <div id="debugInfo"></div>
+    </div>
+    <script>
+        (function() {
+            var url = "dash/manifest.mpd";
+            var player = dashjs.MediaPlayer().create();
+            player.initialize(document.querySelector("#videoPlayer"), url, true);
+
+            player.updateSettings({
+                'streaming': {
+                    'lowLatencyEnabled': true,
+                    'liveDelay': 3,
+                    'liveCatchup': {
+                        'enabled': true,
+                        'maxDrift': 0.5
+                    }
+                }
+            });
+
+            function updateDebugInfo() {
+                var debugInfo = document.getElementById('debugInfo');
+                var info = {
+                    'Playback Rate': player.getPlaybackRate(),
+                    'Buffer Length': player.getBufferLength() + ' seconds',
+                    'Live Delay': player.getCurrentLiveLatency() + ' seconds',
+                    'Video Width': player.getVideoWidth() + 'px',
+                    'Video Height': player.getVideoHeight() + 'px'
+                };
+                var html = '';
+                for (var key in info) {
+                    if (info.hasOwnProperty(key)) {
+                        html += '<p>' + key + ': ' + info[key] + '</p>';
+                    }
+                }
+                debugInfo.innerHTML = html;
+            }
+            setInterval(updateDebugInfo, 1000);
+        })();
+    </script>
+</body>
+</html>
